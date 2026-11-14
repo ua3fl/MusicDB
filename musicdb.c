@@ -182,17 +182,43 @@ const Artist *db_top_artist(const MusicDB *db){
     if (db == NULL || db->n_artists == 0) return NULL;
 
     Artist **p = db->artists; //*p is one artists address, **p is the artist   
-    Artist **end = db->artists + db->n_artists;  //1 past the last slot
+    Artist **end = db->artists + db->n_artists;  //address of 1 past the last slot
     const Artist *best = *p;
 
 
-    for(p = p+1; p < end ; p++){
+    while(p < end){
 
         if (best == NULL || (*p)->n_songs > best->n_songs || ((*p)->n_songs == best->n_songs && strcmp (best->name, (*p)->name) > 0 )){ 
             best = *p;
         }
-
+        p++;
     }
     return best;
 }
 
+/* PTR-ONLY */
+size_t db_count_decade(const MusicDB *db, int start, const Song **best){
+
+    if (db == NULL) return 0;
+
+    if (best != NULL) *best = NULL; //address of best song of that decade
+
+    size_t count = 0;
+    Song **p = db->songs; //p is the database. *p is the address of a song
+    Song **end = db->songs + db->n_songs;  //address of 1 past the last slot
+    Song *top = NULL; //address of top song
+
+
+    while (p < end){
+        if ((*p)-> year >= start && (*p)->year <= start + 9){
+            count++;
+            if (top == NULL || (*p)->num_rated > top->num_rated || ((*p)->num_rated == top->num_rated && (*p)->id < top->id)){ //highest rating, OR lowest id
+                top = *p;
+            }
+        }
+        p++;
+    }
+
+    if (best != NULL) *best = top;
+    return count;
+}
