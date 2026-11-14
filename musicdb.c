@@ -13,7 +13,7 @@ struct MusicDB {
     size_t   cap_artists;
 };
 
-// -----------FUNCTIONS -------------------------
+// --------------- FUNCTIONS -------------------------
 MusicDB *db_create(void){ //create empty database
 
     return calloc(1, sizeof(MusicDB)); //allocate memory the size of MusicDB
@@ -90,7 +90,7 @@ int db_push(MusicDB *db, const char *title, const char *artist,
         }
 
         found->name = malloc(strlen(artist) + 1); //give space for artist string
-        strcpy(s->title, artist); 
+        strcpy(found->name, artist); 
 
         if (found->name == NULL){  //slowly back away
             free(found);  
@@ -196,7 +196,6 @@ int db_load(MusicDB *db, const char *dir){ // that char is just a string
             size_t len = strlen(s);
             while (len > 0 && (s[len - 1] == ' ' || s[len - 1] == '\t' || s[len - 1] == '\r' || s[len - 1] == '\n'))  s[--len] = '\0';
         
-            s[--len] = '\0'; 
             f[i] = s; //initialize f before we start checking
         }
         //if empty reject it
@@ -416,8 +415,10 @@ size_t db_search(const MusicDB *db, song_pred pred, const void *key, const Song 
         }
         s++;
     }
-    if (count == 0) return 0;
-    
+    if (count == 0) {
+        free(matches);
+        return 0;
+    }
 
     *out = matches;
     return count;
