@@ -149,6 +149,14 @@ int db_load(MusicDB *db, const char *dir){ // that char is just a string
     const char *names[5] = { "songs.txt", "artists.txt", "year.txt", "ratings.txt", "people_rated.txt" };
     FILE *files[5] = { NULL, NULL, NULL, NULL, NULL}; //store files here
     char path [4096]; //max size of path
+    
+    char   *lines[5] = { NULL, NULL, NULL, NULL, NULL }; //the line's text
+    size_t  caps[5]  = { 0, 0, 0, 0, 0 };  //max size of each string in line
+    ssize_t n[5];
+    char *f[5]; //trimmed version of lines
+    char *end;
+    int t = -1; //return -1 unless we finish correctly 
+
 
     for (int i =0; i < 5; i++){
         strcpy(path, dir);
@@ -168,12 +176,7 @@ int db_load(MusicDB *db, const char *dir){ // that char is just a string
     */
 
 
-    char   *lines[5] = { NULL, NULL, NULL, NULL, NULL }; //the line's text
-    size_t  caps[5]  = { 0, 0, 0, 0, 0 };  //max size of each string in line
-    ssize_t n[5];
-    char *f[5]; //trimmed version of lines
-    char *end;
-    int t = -1; //return -1 unless we finish correctly 
+    
 
     while(1){ //do on each line
 
