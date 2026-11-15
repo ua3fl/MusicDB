@@ -47,8 +47,7 @@ void db_destroy (MusicDB *db){ //flag ALL the data to be reused
 
 
 /*-------------------------------------Add data functions-------------------------*/
-int db_push(MusicDB *db, const char *title, const char *artist,
-        double rating, int year, unsigned long num_rated){ //We should make those pointers const because they're not copies of data.
+int db_push(MusicDB *db, const char *title, const char *artist, double rating, int year, unsigned long num_rated){ //We should make those pointers const because they're not copies of data.
 
     int created = 0;
 
@@ -149,7 +148,10 @@ int db_load(MusicDB *db, const char *dir){ // that char is just a string
     const char *names[5] = { "songs.txt", "artists.txt", "year.txt", "ratings.txt", "people_rated.txt" };
     FILE *files[5] = { NULL, NULL, NULL, NULL, NULL}; //store files here
     char path [4096]; //max size of path
-    
+
+
+    // EDIT: move these variables up above the for loop which builds the path. If it fails to grab the file, originally it would skip the loop leaving them unitialized.
+
     char   *lines[5] = { NULL, NULL, NULL, NULL, NULL }; //the line's text
     size_t  caps[5]  = { 0, 0, 0, 0, 0 };  //max size of each string in line
     ssize_t n[5];
@@ -230,8 +232,6 @@ int db_load(MusicDB *db, const char *dir){ // that char is just a string
         return t; //mention this as an error
 } 
 
-
-
 /* ----------------------Lookup functions--------------------------*/
 const Song *db_get(const MusicDB *db, size_t i) { //Returns the song at position i in the current order, or NULL if i is out of range.
     if (db == NULL || i >= db -> n_songs) //if no database or i is out of range
@@ -309,12 +309,12 @@ size_t db_count_decade(const MusicDB *db, int start, const Song **best){
 }
 
 //helper functions for dbsort
-static int cmp3(long a, long b)
+static int cmp3(long a, long b) //compare, 3 possible outputs
 {
     return (a > b) - (a < b);                    // -1= a < b, 0= a = b, or 1= a > b
 }
 
-static int hundredths(const Song *s)
+static int hundredths(const Song *s) //convert range to int
 {
     return (int)(s->rating * 100.0f + 0.5f);     // 4.10 becomes 410 */
 }
@@ -426,8 +426,6 @@ size_t db_search(const MusicDB *db, song_pred pred, const void *key, const Song 
     *out = matches;
     return count;
 }
-
-
 
 void db_disp(const MusicDB *db, FILE *out, size_t lim)
 {
